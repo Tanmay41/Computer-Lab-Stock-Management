@@ -1,59 +1,51 @@
-import express from "express";
-import bodyParser from "body-parser";
-import axios from "axios";
-import pg from "pg";
-import "dotenv/config";
-import { log } from "console";
+const express = require("express");
+const { log } = require("console");
+const { Client } = require("pg");
+require("dotenv").config();
 
 const app = express();
 const port = 3000;
+const client = new Client(process.env.DATABASE_URL);
 
-const config = {
-  user: process.env.USER,
-  password: process.env.PASSWORD,
-  host: process.env.HOST,
-  port: process.env.PORT,
-  database: "defaultdb",
-  ssl: {
-    rejectUnauthorized: true,
-    ca: process.env.SSL_CA,
-  },
-};
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.set("view engine", "ejs");
 
-const db = new pg.Client(config);
-
-const client = new pg.Client(config);
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
+client.connect();
 
 app.get("/", async (req, res) => {
+  if (req.query.err) {
+    res.render("index.ejs", { error: true });
+  } else {
+    res.render("index.ejs", { error: false });
+  }
+});
+
+app.post("/stock", async (req, res) => {
+  const { username, password } = req.body;
+
   try {
-    // Query to select all rows from the 'users' table
-    const queryText = "SELECT * FROM users";
+    const result = await client.query(
+      "SELECT * FROM users WHERE username = $1",
+      [username]
+    );
 
-    // Execute the query
-    const result = await db.query(queryText);
+    if (result.rows.length > 0) {
+      const user = result.rows[0];
 
-    // Check if rows are returned
-    if (result && result.rows && result.rows.length > 0) {
-      // Log the first row for demonstration (remove this in production)
-      console.log(result.rows[0]);
-
-      // Send the rows as a response (you can format the response as needed)
-      res.json(result.rows);
+      // Assuming the password column is named 'password' in your database
+      if (password === user.password) {
+        res.render("stock.ejs", { name: username });
+      } else {
+        res.redirect("/?err=true");
+      }
     } else {
-      // Handle case when no rows are returned
-      console.log("No rows found");
-      res.send("<h1>No Data</h1>");
+      res.redirect("/?err=true");
     }
   } catch (error) {
-    // Handle any errors that occur during the query execution
-    console.error("Error executing the query:", error);
-    res.status(500).send("Internal Server Error");
+    console.error("Error executing query:", error);
+    res.redirect("/?err=true");
   }
-
-  client.end();
 });
 
 app.listen(port, async () => {
