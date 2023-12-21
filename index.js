@@ -32,10 +32,8 @@ app.post("/stock", async (req, res) => {
 
     if (result.rows.length > 0) {
       const user = result.rows[0];
-
-      // Assuming the password column is named 'password' in your database
       if (password === user.password) {
-        res.render("stock.ejs", { name: username });
+        res.render("stock.ejs", { name: username, data: result.rows });
       } else {
         res.redirect("/?err=true");
       }

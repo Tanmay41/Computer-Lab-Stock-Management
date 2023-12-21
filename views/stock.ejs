@@ -1,11 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Hello <%= name %></h1>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Computer Lab Stock</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+      }
+
+      #parent{
+        height: 70dvh;
+      }
+
+      .CTA {
+        background-color: rgb(83, 83, 83);
+      }
+    </style>
+  </head>
+  <body>
+        <h1 class="text-center mt-5">Hello <%= name %></h1>
+        <div class="d-flex justify-content-center align-items-center flex-column my-0" id="parent">
+          <div id="buttons">
+            <div class="CTA text-center my-2 rounded py-3 text-white fw-bold">Show Devices in stock</div>
+            <div class="CTA text-center my-2 rounded py-3 text-white fw-bold">Add Stock</div>
+            <div class="CTA text-center my-2 rounded py-3 text-white fw-bold">Edit Stock</div>
+            <div class="CTA text-center my-2 rounded py-3 text-white fw-bold">Delete Device</div>
+          </div>
+        </div>
+
+
+        <%- include('footer') %>
+  </body>
 </html>
