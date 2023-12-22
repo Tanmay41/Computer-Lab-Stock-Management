@@ -23,27 +23,311 @@
         font-family: "Poppins", sans-serif;
       }
 
-      #parent{
+      #parent {
         height: 70dvh;
       }
 
       .CTA {
         background-color: rgb(83, 83, 83);
+        cursor: pointer;
+      }
+
+      .none {
+        display: none;
       }
     </style>
   </head>
   <body>
-        <h1 class="text-center mt-5">Hello <%= name %></h1>
-        <div class="d-flex justify-content-center align-items-center flex-column my-0" id="parent">
-          <div id="buttons">
-            <div class="CTA text-center my-2 rounded py-3 text-white fw-bold">Show Devices in stock</div>
-            <div class="CTA text-center my-2 rounded py-3 text-white fw-bold">Add Stock</div>
-            <div class="CTA text-center my-2 rounded py-3 text-white fw-bold">Edit Stock</div>
-            <div class="CTA text-center my-2 rounded py-3 text-white fw-bold">Delete Device</div>
+    <div id="GUI">
+      <h1 class="text-center mt-5">Hello, <%= name %>!</h1>
+      <div
+        class="d-flex justify-content-center align-items-center flex-column my-0"
+        id="parent"
+      >
+        <div id="buttons">
+          <div
+            id="Show"
+            class="CTA text-center my-2 rounded py-3 text-white fw-bold"
+          >
+            Show Devices in stock
+          </div>
+          <div
+            id="Add"
+            class="CTA text-center my-2 rounded py-3 text-white fw-bold"
+          >
+            Add Stock
+          </div>
+          <div
+            id="Edit"
+            class="CTA text-center my-2 rounded py-3 text-white fw-bold"
+          >
+            Edit Stock
+          </div>
+          <div
+            id="Delete"
+            class="CTA text-center my-2 rounded py-3 text-white fw-bold"
+          >
+            Delete Device
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="none col-8 mx-auto my-5" id="showRows">
+      <button id="backShow" class="btn btn-secondary">Back</button>
+      <div id="search" class="my-3">
+        <input
+          type="text"
+          id="searchInputShow"
+          placeholder="Search by Item Name"
+          class="form-control"
+        />
+      </div>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Item Name</th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% data.rows.map(item=> { %>
+          <tr>
+            <td><%= item.id %></td>
+            <td><%= item.item_name %></td>
+            <td><%= item.quantity %></td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="none col-10 mx-auto" id="addRow">
+      <button id="backAdd" class="btn btn-secondary mb-3">Back</button>
+      <h2 class="text-center mb-4">Add Item to Stock</h2>
+
+      <form id="addItemForm" method="POST" action="/stock/add">
+        <div class="mb-3">
+          <label for="itemName" class="form-label">Item Name</label>
+          <h6>
+            <em class="text-danger"
+              >note: do not use special characters like '</em
+            >
+          </h6>
+          <input
+            name="itemName"
+            type="text"
+            class="form-control"
+            id="itemName"
+            placeholder="Enter item name"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="quantity" class="form-label">Quantity</label>
+          <input
+            name="itemQuantity"
+            type="number"
+            class="form-control"
+            id="quantity"
+            placeholder="Enter quantity"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Item</button>
+      </form>
+    </div>
+
+    <div class="none col-8 mx-auto my-5" id="editRow">
+      <button id="backEdit" class="btn btn-secondary">Back</button>
+      <div id="search" class="my-3">
+        <input
+          type="text"
+          id="searchInputEdit"
+          placeholder="Search by Item Name"
+          class="form-control"
+        />
+      </div>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody class="item-details">
+          <% data.rows.map(item=> { %>
+          <tr id="item_<%= item.id %>">
+            <td><%= item.id %></td>
+            <td class="editable-item-name"><%= item.item_name %></td>
+            <td class="editable-quantity"><%= item.quantity %></td>
+            <td>
+              <button class="btn btn-primary edit-btn" data-id="<%= item.id %>">
+                Edit
+              </button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="none col-10 mx-auto" id="deleteRow"><button id="backDelete" class="btn btn-secondary">Back</button>
+    <div id="search" class="my-3">
+      <input type="text" id="searchInputDel" placeholder="Search by Item Name" class="form-control" />
+    </div>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody class="item-details">
+          <% data.rows.map(item=> { %>
+            <tr id="item_<%= item.id %>">
+              <td>
+                <%= item.id %>
+              </td>
+              <td class="editable-item-name">
+                <%= item.item_name %>
+              </td>
+              <td class="editable-quantity">
+                <%= item.quantity %>
+              </td>
+              <td>
+                <button class="btn btn-primary delete-btn" data-id="<%= item.id %>">
+                  Delete
+                </button>
+              </td>
+            </tr>
+            <% }); %>
+        </tbody>
+      </table>
+    </div>
+
+    <%- include('footer') %>
+
+    <script>
+      const showButton = document.getElementById("Show");
+      const showRows = document.getElementById("showRows");
+      const addButton = document.getElementById("Add");
+      const addRow = document.getElementById("addRow");
+      const editButton = document.getElementById("Edit");
+      const editRow = document.getElementById("editRow");
+      const deleteButton = document.getElementById("Delete");
+      const deleteRow = document.getElementById("deleteRow");
+      const modGUI = document.getElementById("GUI");
+
+      showButton.addEventListener("click", show);
+      addButton.addEventListener("click", add);
+      editButton.addEventListener("click", edit);
+      deleteButton.addEventListener("click", deleteRowFunc);
+
+      function show() {
+        modGUI.classList.toggle("none");
+        showRows.classList.toggle("none");
+      }
+
+      function add() {
+        modGUI.classList.toggle("none");
+        addRow.classList.toggle("none");
+      }
+
+      function edit() {
+        modGUI.classList.toggle("none");
+        editRow.classList.toggle("none");
+      }
+
+      function deleteRowFunc() {
+        modGUI.classList.toggle("none");
+        deleteRow.classList.toggle("none");
+      }
+
+      // Seach fucntion
+
+      function handleSearchShow() {
+        const input = document
+          .getElementById("searchInputShow")
+          .value.toLowerCase();
+        const rows = document.querySelectorAll("#showRows table tbody tr");
+
+        rows.forEach((row) => {
+          const itemName = row
+            .querySelector("td:nth-child(2)")
+            .textContent.toLowerCase();
+
+          // If the search query matches the item name, display the row; otherwise, hide it
+          if (itemName.includes(input)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
+
+      function handleSearchEdit() {
+        const input = document
+          .getElementById("searchInputEdit")
+          .value.toLowerCase();
+        const rows = document.querySelectorAll("#editRow table tbody tr");
+
+        rows.forEach((row) => {
+          const itemName = row
+            .querySelector("td:nth-child(2)")
+            .textContent.toLowerCase();
+
+          // If the search query matches the item name, display the row; otherwise, hide it
+          if (itemName.includes(input)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
 
 
-        <%- include('footer') %>
+      function handleSearchDel() {
+          const input = document
+            .getElementById("searchInputDel")
+            .value.toLowerCase();
+          const rows = document.querySelectorAll("#deleteRow table tbody tr");
+
+          rows.forEach((row) => {
+            const itemName = row
+              .querySelector("td:nth-child(2)")
+              .textContent.toLowerCase();
+
+            // If the search query matches the item name, display the row; otherwise, hide it
+            if (itemName.includes(input)) {
+              row.style.display = "";
+            } else {
+              row.style.display = "none";
+            }
+          });
+        }
+
+      // Add an event listener to the search input and back buttons
+      document
+        .getElementById("searchInputShow")
+        .addEventListener("input", handleSearchShow);
+      document
+        .getElementById("searchInputEdit")
+        .addEventListener("input", handleSearchEdit);
+      document
+          .getElementById("searchInputDel")
+          .addEventListener("input", handleSearchDel);
+      document.getElementById("backShow").addEventListener("click", show);
+      document.getElementById("backAdd").addEventListener("click", add);
+      document.getElementById("backEdit").addEventListener("click", edit);
+      document.getElementById("backDelete").addEventListener("click", deleteRowFunc);
+    </script>
   </body>
 </html>

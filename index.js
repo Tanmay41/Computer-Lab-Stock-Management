@@ -33,7 +33,8 @@ app.post("/stock", async (req, res) => {
     if (result.rows.length > 0) {
       const user = result.rows[0];
       if (password === user.password) {
-        res.render("stock.ejs", { name: username, data: result.rows });
+        const stock = await client.query("SELECT * FROM stock;");
+        res.render("stock.ejs", { name: username, data: stock });
       } else {
         res.redirect("/?err=true");
       }
@@ -44,6 +45,14 @@ app.post("/stock", async (req, res) => {
     console.error("Error executing query:", error);
     res.redirect("/?err=true");
   }
+});
+
+app.post("/stock/add", (req, res) => {
+  const { itemName, itemQuantity } = req.body;
+  client.query(
+    `INSERT INTO stock(item_name, quantity) VALUES('${itemName}', ${itemQuantity});`
+  );
+  res.redirect("/");
 });
 
 app.listen(port, async () => {
