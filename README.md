@@ -25,5 +25,5 @@ This app allows you to manage stock items and their quantities. You can add new 
 
 If you want to contribute, you can add the following:
 
-[ ] redirect to /stock with post request after edit, add or delete__
+[ ] redirect to /stock with post request after edit, add or delete <br />
 [ ] fix bug where if you click "add stock" without filling anything out it would still create an item in the db
