@@ -56,10 +56,6 @@ app.post("/stock/add", (req, res) => {
 });
 
 app.post("/stock/edit/:id", async (req, res) => {
-  // const id = req.params.id;
-  // client.query(`DELETE FROM stock WHERE id = ${id};`).then(() => {
-  //   res.redirect("/");
-  // });
   console.log(req.body);
   const { itemName, itemQuantity } = req.body;
   const rowId = req.params.id;
