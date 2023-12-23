@@ -55,6 +55,27 @@ app.post("/stock/add", (req, res) => {
   res.redirect("/");
 });
 
+app.post("/stock/edit/:id", async (req, res) => {
+  // const id = req.params.id;
+  // client.query(`DELETE FROM stock WHERE id = ${id};`).then(() => {
+  //   res.redirect("/");
+  // });
+  console.log(req.body);
+  const { itemName, itemQuantity } = req.body;
+  const rowId = req.params.id;
+  const result = await client.query(
+    `UPDATE stock SET item_name = '${itemName}', quantity = ${itemQuantity} WHERE id = ${rowId};`
+  );
+  res.redirect("/");
+});
+
+app.post("/stock/delete/:id", (req, res) => {
+  const id = req.params.id;
+  client.query(`DELETE FROM stock WHERE id = ${id};`).then(() => {
+    res.redirect("/");
+  });
+});
+
 app.listen(port, async () => {
   console.log(`Server running on http://localhost:${port}`);
 });

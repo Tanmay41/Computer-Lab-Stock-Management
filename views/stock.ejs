@@ -162,25 +162,44 @@
         </thead>
         <tbody class="item-details">
           <% data.rows.map(item=> { %>
-          <tr id="item_<%= item.id %>">
-            <td><%= item.id %></td>
-            <td class="editable-item-name"><%= item.item_name %></td>
-            <td class="editable-quantity"><%= item.quantity %></td>
-            <td>
-              <button class="btn btn-primary edit-btn" data-id="<%= item.id %>">
-                Edit
-              </button>
-            </td>
-          </tr>
+          <form id="editForm" action="/stock/edit/<%= item.id %>" method="POST">
+            <tr id="item_<%= item.id %>">
+              <td><%= item.id %></td>
+              <td class="editable-item-name">
+                <input name="itemName" onchange=handleEdit() id="<%= item.id %>name" value="<%= item.item_name %>" />
+              </td>
+              <td class="editable-quantity">
+                <input name="itemQuantity" onchange=handleEdit()
+                  id="<%= item.id %>quantity"
+                  type="number"
+                  value="<%= item.quantity %>"
+                />
+              </td>
+              <td>
+                <button
+                  class="btn btn-primary edit-btn"
+                  data-id="<%= item.id %>"
+                >
+                  Edit
+                </button>
+              </td>
+            </tr>
+          </form>
           <% }); %>
         </tbody>
       </table>
     </div>
 
-    <div class="none col-10 mx-auto" id="deleteRow"><button id="backDelete" class="btn btn-secondary">Back</button>
-    <div id="search" class="my-3">
-      <input type="text" id="searchInputDel" placeholder="Search by Item Name" class="form-control" />
-    </div>
+    <div class="none col-10 mx-auto" id="deleteRow">
+      <button id="backDelete" class="btn btn-secondary">Back</button>
+      <div id="search" class="my-3">
+        <input
+          type="text"
+          id="searchInputDel"
+          placeholder="Search by Item Name"
+          class="form-control"
+        />
+      </div>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -192,26 +211,32 @@
         </thead>
         <tbody class="item-details">
           <% data.rows.map(item=> { %>
+          <form
+            action="/stock/delete/<%= item.id %>"
+            method="POST"
+          >
             <tr id="item_<%= item.id %>">
-              <td>
-                <%= item.id %>
-              </td>
-              <td class="editable-item-name">
+              <td><%= item.id %></td>
+              <td id="name" class="editable-item-name">
                 <%= item.item_name %>
               </td>
-              <td class="editable-quantity">
+              <td id="quantity" class="editable-quantity">
                 <%= item.quantity %>
               </td>
               <td>
-                <button class="btn btn-primary delete-btn" data-id="<%= item.id %>">
+                <button type="submit" class="btn btn-primary delete-btn">
                   Delete
                 </button>
               </td>
             </tr>
-            <% }); %>
+          </form>
+          <% }); %>
         </tbody>
       </table>
     </div>
+
+
+
 
     <%- include('footer') %>
 
@@ -293,26 +318,25 @@
         });
       }
 
-
       function handleSearchDel() {
-          const input = document
-            .getElementById("searchInputDel")
-            .value.toLowerCase();
-          const rows = document.querySelectorAll("#deleteRow table tbody tr");
+        const input = document
+          .getElementById("searchInputDel")
+          .value.toLowerCase();
+        const rows = document.querySelectorAll("#deleteRow table tbody tr");
 
-          rows.forEach((row) => {
-            const itemName = row
-              .querySelector("td:nth-child(2)")
-              .textContent.toLowerCase();
+        rows.forEach((row) => {
+          const itemName = row
+            .querySelector("td:nth-child(2)")
+            .textContent.toLowerCase();
 
-            // If the search query matches the item name, display the row; otherwise, hide it
-            if (itemName.includes(input)) {
-              row.style.display = "";
-            } else {
-              row.style.display = "none";
-            }
-          });
-        }
+          // If the search query matches the item name, display the row; otherwise, hide it
+          if (itemName.includes(input)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
 
       // Add an event listener to the search input and back buttons
       document
@@ -322,12 +346,14 @@
         .getElementById("searchInputEdit")
         .addEventListener("input", handleSearchEdit);
       document
-          .getElementById("searchInputDel")
-          .addEventListener("input", handleSearchDel);
+        .getElementById("searchInputDel")
+        .addEventListener("input", handleSearchDel);
       document.getElementById("backShow").addEventListener("click", show);
       document.getElementById("backAdd").addEventListener("click", add);
       document.getElementById("backEdit").addEventListener("click", edit);
-      document.getElementById("backDelete").addEventListener("click", deleteRowFunc);
+      document
+        .getElementById("backDelete")
+        .addEventListener("click", deleteRowFunc);
     </script>
   </body>
 </html>
