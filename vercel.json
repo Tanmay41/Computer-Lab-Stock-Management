@@ -3,6 +3,7 @@
   "builds": [
     {
       "src": "./index.js",
+      "run": "nodemon index.js",
       "use": "@vercel/node"
     }
   ],
